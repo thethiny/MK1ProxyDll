@@ -24,20 +24,24 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Get version from .version file
-      id: version
+      id: get_version
       # run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT # Remove temporraily
       run: echo "version=Version123" >> $GITHUB_OUTPUT
       working-directory: ${{ github.workspace }}
+
+    - name: Get current files list
+      run: ls
 
     - name: Create GitHub Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ github.workspace }}\MK160FPSPatch\x64\Release\dsound.dll
-        name: Version ${{ steps.version.outputs.version }}
-        tag_name:  v${{ steps.version.outputs.version }}
+        files: .\MK160FPSPatch\x64\Release\dsound.dll
+        name: Version ${{ env.PROXY_VERSION }}
+        tag_name:  v${{ env.PROXY_VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PROXY_VERSION: ${{ steps.get_version.outputs.version }}
 
     # - name: Set release tag
     #   run: |
