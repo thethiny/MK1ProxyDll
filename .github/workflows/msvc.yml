@@ -17,23 +17,13 @@ jobs:
       uses: microsoft/setup-msbuild@v1
 
     - name: Build Proxy Dll
-      run: |
-        msbuild MK1Proxy.sln /p:Configuration=Release /p:Platform=x64
+      run: msbuild MK1Proxy.sln /p:Configuration=Release /p:Platform=x64
       working-directory: ${{ github.workspace }}
 
     - name: Get version from .version file
       id: get_version
-      # run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT # Remove temporraily
-      run: |
-        echo "version=$(cat .version)" >> $GITHUB_OUTPUT
-        echo "::set-output name=version2::$(cat .version)"
-
+      run: echo "version=$(cat .version)" >> $env:GITHUB_OUTPUT
       working-directory: ${{ github.workspace }}
-
-    - name: Echo Github Output
-      run: |
-        echo "${{ steps.get_version.outputs.version }}"
-        echo "${{ steps.get_version.outputs.version2 }}"
 
     - name: Create GitHub Release
       id: create_release
@@ -45,8 +35,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PROXY_VERSION: ${{ steps.get_version.outputs.version }}
-
-    # - name: Set release tag
-    #   run: |
-    #     git tag -a ${{ steps.version.outputs.version }} -m "Release v${{ steps.version.outputs.version }}"
-    #     git push --follow-tags
