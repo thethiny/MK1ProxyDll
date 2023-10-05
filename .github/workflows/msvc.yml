@@ -33,11 +33,11 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: MK160FPSPatch\x64\Release\dsound.dll
-        release_name: Version ${{ steps.version.outputs.version }}
-        release_tag:  v${{ steps.version.outputs.version }}
+        name: Version ${{ steps.version.outputs.version }}
+        tag_name:  v${{ steps.version.outputs.version }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
     # - name: Set release tag
     #   run: |
     #     git tag -a ${{ steps.version.outputs.version }} -m "Release v${{ steps.version.outputs.version }}"
