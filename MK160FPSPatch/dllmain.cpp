@@ -1,38 +1,60 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
-#include "utils/addr.h"
-#include "utils/MemoryMgr.h"
-#include "utils/Trampoline.h"
-#include "utils/Patterns.h"
 #include "exports.h"
-#include "minhook/include/MinHook.h"
 
-using namespace Memory::VP;
-using namespace hook::txn;
+HANDLE hConsole = NULL;
 
-static void (*orgSetFrameSkipping)(int status, int flags);
-void SetFrameSkipping(int mode, int flags)
+void LoadECPFiles()
 {
-    mode = 1;
-    orgSetFrameSkipping(mode, flags);
+	HMODULE hModule = GetModuleHandle(nullptr);
+	WCHAR path[MAX_PATH];
+	GetModuleFileName(hModule, path, MAX_PATH);
+
+	std::filesystem::path filePath(path);
+	std::filesystem::path directoryPath = filePath.parent_path();
+
+	for (const auto& entry : std::filesystem::directory_iterator(directoryPath))
+	{
+		if (wcscmp(L".ehp", entry.path().extension().c_str()) == 0)
+		{
+			wprintf(L"Loading Hook Plugin %s!\n", entry.path().c_str());
+			auto libName = entry.path().c_str();
+			HMODULE module = LoadLibrary(libName);
+			if (module)
+			{
+				printf("Plugin Loaded Successfully!\n");
+			} 
+			else
+			{
+				printf("Failed to load Plugin!\n");
+			}
+		}
+	}
+
+}
+
+void CreateConsole()
+{
+	AllocConsole();
+
+	FILE* fNull;
+	freopen_s(&fNull, "CONOUT$", "w", stdout);
+	freopen_s(&fNull, "CONOUT$", "w", stderr);
+
+	std::string consoleName = "EHP Console Window";
+	SetConsoleTitleA(consoleName.c_str());
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD dwMode = 0;
+	GetConsoleMode(hConsole, &dwMode);
+	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	SetConsoleMode(hConsole, dwMode);
+	printf("EHP Dll Loader\n");
 }
 
 void Init()
 {
-    MH_Initialize();
-    static uintptr_t setFrameSkippingPtr = 0;
-
-    setFrameSkippingPtr = (uintptr_t)get_pattern("48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B6 D9 8B FA 0F B6 0D ? ? ? ? 8D 41 FE");
-
-    if (setFrameSkippingPtr)
-    {
-        MH_STATUS s = MH_CreateHook((void*)setFrameSkippingPtr, SetFrameSkipping, (void**)&orgSetFrameSkipping);
-
-        if (s == MH_OK)
-            MH_EnableHook((void*)setFrameSkippingPtr);
-    }
-    else
-        MessageBoxA(0, "Failed to find SetFrameSkip pattern!", "MK1.60FPSPatch", MB_ICONERROR);
+	CreateConsole();
+	LoadECPFiles();
 }
 
 
