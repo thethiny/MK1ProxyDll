@@ -1,0 +1,47 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up MSVC 2019 environment
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Build project
+      run: |
+        msbuild MK1Proxy.sln /p:Configuration=Release /p:Platform=x64
+        cd MK160FPSPatch
+        msbuild MK160FPSPatch.vcxproj /p:Configuration=Release /p:Platform=x64
+      working-directory: ${{ github.workspace }}
+
+    - name: Copy dsound.dll
+      run: |
+        copy MK160FPSPatch\x64\Release\dllmain.dll dsound.dll
+      working-directory: ${{ github.workspace }}
+
+    - name: Get version from .version file
+      id: version
+      run: echo "::set-output name=version::$(cat .version)"
+      working-directory: ${{ github.workspace }}
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dsound.dll
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set release tag
+      run: |
+        git tag -a ${{ steps.version.outputs.version }} -m "Release v${{ steps.version.outputs.version }}"
+        git push --follow-tags
