@@ -6,6 +6,7 @@ on:
       - master
     paths:
     - ".version" # Only when version changes
+  workflow_dispatch: # Allow manual runs
 
 jobs:
   build:
