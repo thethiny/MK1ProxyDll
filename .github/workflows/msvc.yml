@@ -27,21 +27,18 @@ jobs:
       run: |
         echo "version=$(cat .version)" >> $GITHUB_OUTPUT
         echo "::set-output name=version2::$(cat .version)"
-        echo "$GITHUB_OUTPUT"
+        echo $GITHUB_OUTPUT
 
       working-directory: ${{ github.workspace }}
 
-    - name: Get current files list
-      run: |
-        ls
-        ls MK160FPSPatch
-        ls x64\Release
+    - name: Echo Github Output
+      run: echo $GITHUB_OUTPUT
 
     - name: Create GitHub Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: .\x64\Release\dsound.dll
+        files: ${{ github.workspace }}\x64\Release\dsound.dll
         name: Version ${{ env.PROXY_VERSION }}
         tag_name:  v${{ env.PROXY_VERSION }}
       env:
