@@ -23,11 +23,6 @@ jobs:
         msbuild MK160FPSPatch.vcxproj /p:Configuration=Release /p:Platform=x64
       working-directory: ${{ github.workspace }}
 
-    - name: Copy dsound.dll
-      run: |
-        copy MK160FPSPatch\x64\Release\dllmain.dll dsound.dll
-      working-directory: ${{ github.workspace }}
-
     - name: Get version from .version file
       id: version
       run: echo "::set-output name=version::$(cat .version)"
@@ -37,7 +32,7 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: dsound.dll
+        files: MK160FPSPatch\x64\Release\dsound.dll
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
