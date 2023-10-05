@@ -13,10 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up MSVC 2019 environment
+    - name: Set up MSVC environment
       uses: microsoft/setup-msbuild@v1
 
-    - name: Build project
+    - name: Build Proxy Dll
       run: |
         msbuild MK1Proxy.sln /p:Configuration=Release /p:Platform=x64
         cd MK160FPSPatch
@@ -26,7 +26,10 @@ jobs:
     - name: Get version from .version file
       id: get_version
       # run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT # Remove temporraily
-      run: echo "version=Version123" >> $GITHUB_OUTPUT
+      run: |
+        echo "version=Version123" >> $GITHUB_OUTPUT
+        echo "::set-output name=version2::$(cat .version)"
+
       working-directory: ${{ github.workspace }}
 
     - name: Get current files list
@@ -36,12 +39,12 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: .\MK160FPSPatch\x64\Release\dsound.dll
+        files: .\x64\Release\dsound.dll
         name: Version ${{ env.PROXY_VERSION }}
         tag_name:  v${{ env.PROXY_VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PROXY_VERSION: ${{ steps.get_version.outputs.version }}
+        PROXY_VERSION: ${{ steps.get_version.outputs.version2 }}
 
     # - name: Set release tag
     #   run: |
