@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+    - ".version" # Only when version changes
 
 jobs:
   build:
