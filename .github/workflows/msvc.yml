@@ -25,7 +25,8 @@ jobs:
 
     - name: Get version from .version file
       id: version
-      run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT
+      # run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT # Remove temporraily
+      run: echo "version=Version123" >> $GITHUB_OUTPUT
       working-directory: ${{ github.workspace }}
 
     - name: Create GitHub Release
@@ -37,6 +38,7 @@ jobs:
         tag_name:  v${{ steps.version.outputs.version }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      working-directory: ${{ github.workspace }}
 
     # - name: Set release tag
     #   run: |
