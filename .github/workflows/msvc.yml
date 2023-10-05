@@ -19,8 +19,6 @@ jobs:
     - name: Build Proxy Dll
       run: |
         msbuild MK1Proxy.sln /p:Configuration=Release /p:Platform=x64
-        cd MK160FPSPatch
-        msbuild MK160FPSPatch.vcxproj /p:Configuration=Release /p:Platform=x64
       working-directory: ${{ github.workspace }}
 
     - name: Get version from .version file
@@ -29,6 +27,7 @@ jobs:
       run: |
         echo "version=$(cat .version)" >> $GITHUB_OUTPUT
         echo "::set-output name=version2::$(cat .version)"
+        echo "$GITHUB_OUTPUT"
 
       working-directory: ${{ github.workspace }}
 
@@ -36,7 +35,7 @@ jobs:
       run: |
         ls
         ls MK160FPSPatch
-        ls x64
+        ls x64\Release
 
     - name: Create GitHub Release
       id: create_release
