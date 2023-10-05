@@ -27,13 +27,16 @@ jobs:
       id: get_version
       # run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT # Remove temporraily
       run: |
-        echo "version=Version123" >> $GITHUB_OUTPUT
+        echo "version=$(cat .version)" >> $GITHUB_OUTPUT
         echo "::set-output name=version2::$(cat .version)"
 
       working-directory: ${{ github.workspace }}
 
     - name: Get current files list
-      run: ls
+      run: |
+        ls
+        ls MK160FPSPatch
+        ls x64
 
     - name: Create GitHub Release
       id: create_release
@@ -44,7 +47,7 @@ jobs:
         tag_name:  v${{ env.PROXY_VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PROXY_VERSION: ${{ steps.get_version.outputs.version2 }}
+        PROXY_VERSION: ${{ steps.get_version.outputs.version }}
 
     # - name: Set release tag
     #   run: |
