@@ -27,12 +27,16 @@ jobs:
       run: |
         echo "version=$(cat .version)" >> $GITHUB_OUTPUT
         echo "::set-output name=version2::$(cat .version)"
-        echo $GITHUB_OUTPUT
+        echo "$(cat $GITHUB_OUTPUT)"
 
       working-directory: ${{ github.workspace }}
 
     - name: Echo Github Output
-      run: echo $GITHUB_OUTPUT
+      run: |
+        echo $GITHUB_OUTPUT
+        echo "$(cat $GITHUB_OUTPUT)"
+        echo "$(cat ${GITHUB_OUTPUT})"
+        echo ${GITHUB_OUTPUT}
 
     - name: Create GitHub Release
       id: create_release
