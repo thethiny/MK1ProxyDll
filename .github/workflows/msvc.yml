@@ -27,7 +27,6 @@ jobs:
       run: |
         echo "version=$(cat .version)" >> $GITHUB_OUTPUT
         echo "::set-output name=version2::$(cat .version)"
-        cat $GITHUB_OUTPUT
 
       working-directory: ${{ github.workspace }}
 
@@ -40,7 +39,7 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ github.workspace }}\x64\Release\dsound.dll
+        files: ./x64/Release/dsound.dll
         name: Version ${{ env.PROXY_VERSION }}
         tag_name:  v${{ env.PROXY_VERSION }}
       env:
