@@ -2,8 +2,6 @@
 #include "pch.h"
 #include "exports.h"
 
-#define DEBUG_MODE 0
-
 HANDLE hConsole = NULL;
 
 void LoadECPFiles()
@@ -77,7 +75,7 @@ void CreateConsole()
 
 void Init()
 {
-#ifdef DEBUG_MODE
+#ifdef _DEBUG
 	CreateConsole();
 #endif
 	LoadECPFiles();
